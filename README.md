@@ -24,12 +24,13 @@ Due to privacy concerns, I am unable to share the dataset.
 
 ### Crop image
 Training the Corner Detection Model (detect_corners.pt)
-![alt text](./img/image.png)
+![alt text](./images/detect_corner.png)
+![alt text](./images/crop_img.png)
 Then using Warp Perspective with 4 centers of 4 corners box after using NMS to get rid of some boxes in the same place
 
 ### Detect information
 Training the Information Detection Model (detect_info.pt)
-![alt text](./img/image2.png)
+![alt text](./images/detect_info.png)
 
 ### Read information
 Image Preprocessing
