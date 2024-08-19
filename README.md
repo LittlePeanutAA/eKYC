@@ -16,7 +16,7 @@ requiments.txt
 ## DESIGN AND IMPLEMENTATION
 
 ### Overall Architecture
-![pipeline](./img/pipeline.png)
+![pipeline](./images/pipeline.png)
 
 ### Dataset
 The dataset for the models consists of the front side of Vietnamese identity cards. I collected 400 images. The images satisfy various conditions such as being captured from different angles and sizes, varying resolutions (high or low), overexposure or underexposure, and other background settings. I split the dataset into three parts: train (300 images), validation (50 images), and test (50 images).
