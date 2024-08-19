@@ -33,5 +33,5 @@ pandas
 # albumentations>=1.0.3
 thop  # FLOPs computation
 
-#vietocr==0.3.5
+vietocr==0.3.5
 ultralytics
