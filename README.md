@@ -26,6 +26,7 @@ Due to privacy concerns, I am unable to share the dataset.
 Training the Corner Detection Model (detect_corners.pt)
 ![alt text](./images/detect_corner.png)
 ![alt text](./images/crop_img.png)
+
 Then using Warp Perspective with 4 centers of 4 corners box after using NMS to get rid of some boxes in the same place
 
 ### Detect information
