@@ -8,7 +8,7 @@ Libraries Used
 * Label Studio
 
 ## Pre-trained Models
-Download [here]([https://drive.google.com/drive/u/0/folders/1ouUg-HtHcA9UO2-WYBrFT-vXVsMn-Bey](https://drive.google.com/drive/folders/1RuyoUGBAh28Vc0wcTQMIfeS_dJeaShlB?usp=drive_link))
+Download [here](https://drive.google.com/drive/folders/1RuyoUGBAh28Vc0wcTQMIfeS_dJeaShlB?usp=drive_link)
 
 ## Requirements
 requiments.txt
