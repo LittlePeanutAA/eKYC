@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ekyc"
+version = "2.0.0"
+description = "Information extraction from Vietnamese citizen ID cards (CCCD): card cropping, field detection and OCR"
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.9"
+authors = [{ name = "LittlePeanutAA" }]
+dependencies = [
+    "ultralytics>=8.2",
+    "vietocr>=0.3.13",
+    "opencv-python-headless>=4.8",
+    "numpy",
+    "pillow",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart"]
+dev = ["pytest", "httpx"]
+
+[project.scripts]
+ekyc = "ekyc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ekyc.configs" = ["*.yml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
