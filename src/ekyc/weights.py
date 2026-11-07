@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -37,7 +38,7 @@ def get_weights(name: str) -> str:
         return str(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".part")
-    print(f"Downloading {file} ...")
+    print(f"Downloading {file} ...", file=sys.stderr)  # keep stdout clean for JSON output
     urllib.request.urlretrieve(f"{RELEASE}/{file}", tmp)
     if _sha256(tmp) != sha:
         tmp.unlink()
