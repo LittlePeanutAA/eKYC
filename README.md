@@ -7,10 +7,10 @@ locate and flatten the card, find the text fields, read them with a Vietnamese O
 $ ekyc examples/specimen_2.jpg
 {
   "fields": {
-    "id":       { "text": "0793••••••••", "confidence": 0.93, ... },
-    "name":     { "text": "TRẦN ••• •••", ... },
-    "dob":      { "text": "••/••/2001", ... },
-    "hometown": { "text": "••••, Quận 1, TP Hồ Chí Minh", ... }
+    "id":       { "text": "079301005678", "confidence": 0.93, ... },
+    "name":     { "text": "TRẦN THỊ BÌNH", ... },
+    "dob":      { "text": "15/06/2001", ... },
+    "hometown": { "text": "Tân Định, Quận 1, TP Hồ Chí Minh", ... }
   },
   "face_box": [7, 178, 223, 476],
   "card_quad": [[...], [...], [...], [...]],
@@ -20,9 +20,6 @@ $ ekyc examples/specimen_2.jpg
 ```
 
 ![result](docs/images/result_specimen_2.jpg)
-
-<sub>Left: input photo with the detected card outline. Right: the flattened card with the detected fields.
-Field values are hidden here (`ekyc card.jpg --vis out.jpg --redact`), and partly masked in the JSON above.</sub>
 
 > The sample cards in `examples/` are **fictitious specimens**: every personal detail (face, QR code, number,
 > name, dates, addresses) was replaced with invented data. No real ID card is included in this repository.
