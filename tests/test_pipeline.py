@@ -31,6 +31,20 @@ def test_specimen(ekyc, name):
     assert not result.warnings
 
 
+def test_draw_redact(ekyc):
+    import numpy as np
+
+    from ekyc import draw
+
+    image = cv2.imread(str(ROOT / "examples" / "specimen_2.jpg"))
+    result = ekyc(image)
+    vis = draw(result, image, redact=True)
+    card = vis[:, -result.card_image.shape[1]:]  # right half: the flattened card
+    x1, y1, x2, y2 = result.fields["id"].boxes[0]
+    patch = card[y1 + 2:y2 - 2, x1 + 2:x1 + 20]  # left of the centred label
+    assert (patch == patch[0, 0]).all() and not np.array_equal(patch, result.card_image[y1 + 2:y2 - 2, x1 + 2:x1 + 20])
+
+
 def test_no_card(ekyc):
     import numpy as np
 

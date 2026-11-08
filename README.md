@@ -7,10 +7,10 @@ locate and flatten the card, find the text fields, read them with a Vietnamese O
 $ ekyc examples/specimen_2.jpg
 {
   "fields": {
-    "id":       { "text": "079301005678", "confidence": 0.93, ... },
-    "name":     { "text": "TRẦN THỊ BÌNH", ... },
-    "dob":      { "text": "15/06/2001", ... },
-    "hometown": { "text": "Tân Định, Quận 1, TP Hồ Chí Minh", ... }
+    "id":       { "text": "0793••••••••", "confidence": 0.93, ... },
+    "name":     { "text": "TRẦN ••• •••", ... },
+    "dob":      { "text": "••/••/2001", ... },
+    "hometown": { "text": "••••, Quận 1, TP Hồ Chí Minh", ... }
   },
   "face_box": [7, 178, 223, 476],
   "card_quad": [[...], [...], [...], [...]],
@@ -21,19 +21,15 @@ $ ekyc examples/specimen_2.jpg
 
 ![result](docs/images/result_specimen_2.jpg)
 
+<sub>Left: input photo with the detected card outline. Right: the flattened card with the detected fields.
+Field values are hidden here (`ekyc card.jpg --vis out.jpg --redact`), and partly masked in the JSON above.</sub>
+
 > The sample cards in `examples/` are **fictitious specimens**: every personal detail (face, QR code, number,
 > name, dates, addresses) was replaced with invented data. No real ID card is included in this repository.
 
 ## Pipeline
 
-```mermaid
-flowchart LR
-    A[Photo] --> B["1 · Cropper<br/>YOLOv8: 4 card corners"]
-    B -->|perspective warp<br/>856×540| C["2 · Field detector<br/>YOLOv8s: id, name, dob,<br/>hometown, face"]
-    C -->|line crops| D["3 · Reader<br/>VietOCR VGG19-Transformer"]
-    D --> E["4 · Post-processing<br/>normalise + validate"]
-    E --> F[JSON]
-```
+<p align="center"><img src="docs/images/pipeline.svg" alt="eKYC pipeline: photo, card cropper, field detector, text reader, post-processing, JSON" width="100%"></p>
 
 | Stage | Model | Size | Output |
 |---|---|---|---|
@@ -74,6 +70,7 @@ and cached in `~/.cache/ekyc` (override with `EKYC_WEIGHTS_DIR`).
 ```bash
 ekyc card.jpg                                  # JSON to stdout
 ekyc card.jpg --vis result.jpg                 # + visualisation
+ekyc card.jpg --vis result.jpg --redact        # visualisation with fields and face hidden (safe to share)
 ekyc *.jpg --vis out_dir/ --device cuda        # batch, GPU
 ekyc form.jpg --cropper keypoints              # paper documents
 ```
@@ -93,7 +90,7 @@ except CardNotFoundError:
 
 print(result.fields["id"].text, result.fields["id"].confidence)
 print(result.warnings)                         # e.g. ["dob: invalid date 31/02/1999"]
-cv2.imwrite("vis.jpg", draw(result, image))
+cv2.imwrite("vis.jpg", draw(result, image))                  # draw(..., redact=True) hides the values
 ```
 
 ### HTTP API

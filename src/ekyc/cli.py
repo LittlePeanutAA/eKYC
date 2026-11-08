@@ -1,4 +1,4 @@
-"""Command line: ``ekyc card.jpg [--cropper keypoints] [--vis out.jpg]``."""
+"""Command line: ``ekyc card.jpg [--cropper keypoints] [--vis out.jpg [--redact]]``."""
 from __future__ import annotations
 
 import argparse
@@ -19,6 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--enhance-ocr", action="store_true", help="shadow removal + contrast stretch before OCR")
     p.add_argument("--fallback-full-image", action="store_true", help="run on the whole image if no card is found")
     p.add_argument("--vis", help="save a visualisation (one image) or a directory (several images)")
+    p.add_argument("--redact", action="store_true", help="cover the fields and face with opaque boxes in --vis")
     args = p.parse_args(argv)
 
     ekyc = EKYC.from_pretrained(args.cropper, args.device, args.cropper_weights, args.enhance_ocr,
@@ -39,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"image": path, **result.to_dict()}, ensure_ascii=False, indent=2))
         if args.vis:
             out = args.vis if len(args.images) == 1 else f"{args.vis.rstrip('/')}/{path.rsplit('/', 1)[-1]}"
-            cv2.imwrite(out, draw(result, image))
+            cv2.imwrite(out, draw(result, image, redact=args.redact))
     return status
 
 

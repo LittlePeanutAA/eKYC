@@ -120,19 +120,45 @@ class EKYC:
         )
 
 
-def draw(result: ExtractionResult, image: np.ndarray | None = None) -> np.ndarray:
-    """Visualise the result: card quad on the input (if given) beside the annotated crop."""
-    card = result.card_image.copy()
-    for name, f in result.fields.items():
-        for x1, y1, x2, y2 in f.boxes:
-            cv2.rectangle(card, (x1, y1), (x2, y2), (0, 200, 0), 2)
-            cv2.putText(card, name, (x1, max(12, y1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 140, 0), 1, cv2.LINE_AA)
+def _card_to_image(result: ExtractionResult, box) -> np.ndarray:
+    """Project an (x1, y1, x2, y2) box on the warped card back onto the input photo as a polygon."""
+    h, w = result.card_image.shape[:2]
+    rect = np.array([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]], dtype=np.float32)
+    m = cv2.getPerspectiveTransform(rect, np.array(result.card_quad, dtype=np.float32))
+    x1, y1, x2, y2 = box
+    pts = np.array([[[x1, y1], [x2, y1], [x2, y2], [x1, y2]]], dtype=np.float32)
+    return cv2.perspectiveTransform(pts, m)[0].round().astype(np.int32)
+
+
+def draw(result: ExtractionResult, image: np.ndarray | None = None, redact: bool = False) -> np.ndarray:
+    """Visualise the result: card quad on the input (if given) beside the annotated crop.
+
+    With ``redact=True`` every detected field and the face are covered by an opaque box (on the
+    crop and on the input photo), so the picture can be shared without the personal data.
+    """
+    green, blue = (0, 160, 0), (200, 120, 0)
+    boxes = [(name, b, green) for name, f in result.fields.items() for b in f.boxes]
     if result.face_box:
-        x1, y1, x2, y2 = result.face_box
-        cv2.rectangle(card, (x1, y1), (x2, y2), (200, 120, 0), 2)
+        boxes.append(("face", result.face_box, blue))
+
+    card = result.card_image.copy()
+    for name, (x1, y1, x2, y2), color in boxes:
+        if redact:
+            cv2.rectangle(card, (x1, y1), (x2, y2), color, -1)
+            (tw, th), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)
+            org = ((x1 + x2 - tw) // 2, (y1 + y2 + th) // 2)
+            cv2.putText(card, name, org, cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 1, cv2.LINE_AA)
+        else:
+            cv2.rectangle(card, (x1, y1), (x2, y2), color, 2)
+            if name != "face":
+                cv2.putText(card, name, (x1, max(12, y1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 140, 0), 1,
+                            cv2.LINE_AA)
     if image is None or result.card_quad is None:
         return card
     src = image.copy()
+    if redact:
+        for _, box, color in boxes:
+            cv2.fillPoly(src, [_card_to_image(result, box)], color)
     cv2.polylines(src, [np.array(result.card_quad, np.int32)], True, (0, 200, 0), max(2, src.shape[1] // 300))
     src = cv2.resize(src, (int(src.shape[1] * card.shape[0] / src.shape[0]), card.shape[0]))
     return np.hstack([src, card])
